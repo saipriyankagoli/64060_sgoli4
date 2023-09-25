@@ -1,0 +1,70 @@
+---
+title: "Untitled"
+author: "Goli Sai Priyanka"
+date: "2023-09-24"
+output:
+  pdf_document: default
+  html_document: default
+---
+#Downloaded the dataset called "smartphone-cleaned_v5" from the source:datasource:https://www.kaggle.com/datasets/abdurrahman22224/smartphone-new-data
+
+```{r}
+#Read the dataset which was downloaded and load into a dataframe p_file
+p_file <-read.csv("C:/Users/Ajay Reddy/Downloads/smartphone_cleaned_v5.csv")
+#gives the full dataset
+p_file
+```
+#descriptive statistics like mean,median,min,max etc, for numeric variable 'price'
+
+```{r}
+summary(p_file)
+
+mean(p_file$price)
+
+median(p_file$price)
+
+sd(p_file$price)
+
+var(p_file$price)
+
+min(p_file$price)
+
+max(p_file$price)
+
+str(p_file$price)
+```
+#descriptive statistics for categorical variables
+
+```{r}
+table(p_file$os)
+
+table(p_file$has_nfc)
+
+str(p_file$os)
+```
+#transforming variables
+
+```{r}
+log(p_file$price)
+
+log(p_file$rating)
+
+p<-p_file$price-p_file$rating-max(p_file$price)/min(p_file$price)
+
+p
+```
+#plotting histogram for variable 'price'
+
+```{r}
+hist(p_file$price,main = "HISTOGRAM OF price")
+```
+#scatterplot of 2 variables- price vs rating
+
+```{r}
+plot(p_file$price,p_file$rating,main ="scatterplot")
+```
+
+
+
+
+
