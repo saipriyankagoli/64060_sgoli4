@@ -1,0 +1,247 @@
+---
+title: "sgoli4-5FML"
+author: "Goli Sai Priyanka"
+date: "2023-12-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+# The neccesary libraries
+library(cluster)
+library(caret)
+library(dendextend)
+```
+
+```{r}
+# The neccesary libraries
+library(knitr)
+library(factoextra)
+```
+
+```{r}
+#Bringing in the cereals data set
+Data_cereals <- read.csv("C:/Users/itspr/Downloads/Cereals.csv")
+
+# Extricate columns 4 to 16 from the 'Data_Cereals' dataset and store them in a unused information outline 'Data.cereals'
+Data.cereals <- data.frame(Data_cereals[, 4:16])
+
+```
+
+```{r}
+#Evacuating the lost values from the information
+Data.cereals <- na.omit(Data.cereals)
+##Data normalization and data scaling
+cereals.normalization <- scale(Data.cereals)
+```
+
+```{r}
+#Applying various leveled clustering to the information utilizing euclidean separate to normalize estimations
+EuclideanDistance <- dist(cereals.normalization, method = "euclidean")
+hierarchical.cluster.complete <- hclust(EuclideanDistance, method = "complete")
+
+#plotting the dendogram
+plot(hierarchical.cluster.complete, cex = 0.7, hang = -1)
+```
+
+```{r}
+##Utilizing agnes() work to perform clustering with single, complete,average, ward linkages separately.
+
+hierarchical.cluster.single <- agnes(cereals.normalization, method = "single")
+hierarchical.cluster.complete <- agnes(cereals.normalization, method = "complete")
+hierarchical.cluster.average <- agnes(cereals.normalization, method = "average")
+hierarchical.cluster.ward <- agnes(cereals.normalization, method = "ward")
+```
+
+```{r}
+# printing 'ac' property esteem of the various leveled cluster.single linkage
+print(hierarchical.cluster.single$ac)
+```
+
+```{r}
+# printing 'ac' property esteem of the various leveled cluster.complete linkage
+print(hierarchical.cluster.complete$ac)
+```
+
+```{r}
+# printing 'ac' trait esteem of the progressive cluster.average linkage
+print(hierarchical.cluster.average$ac)
+```
+```{r}
+# printing 'ac' trait esteem of the various leveled cluster.ward linkage
+print(hierarchical.cluster.ward$ac)
+```
+##The leading result we gotten from the yield over is 0.904, or ward linkage. cutting the Dendrogram and plotting the agnes utilizing the Ward strategy. We'll utilize the remove to induce k = 4.
+
+# selecting or choosing clusters
+
+```{r}
+#Plotting the dendrogram utilizing pltree work from various leveled clustering result (Utilizing Ward strategy)
+pltree(hierarchical.cluster.ward, cex = 0.7, hang = -1, main = "Dendrogram of agnes (Using Ward linkage)")
+
+#Highlighting clusters by drawing rectangles around clusters (in this case, k = 5 clusters)
+rect.hclust(hierarchical.cluster.ward, k = 5, border = 1:4)
+```
+```{r}
+# Relegating cluster names to each perception utilizing cutree work based on Ward's various leveled clustering with k=5 clusters
+Cluster01 <- cutree(hierarchical.cluster.ward, k=5)
+
+#Making a unused dataframe (dataframe2) combining the first information (cereals.normalization) and the cluster names
+data02 <- as.data.frame(cbind(cereals.normalization,Cluster01))
+```
+
+```{r}
+# We'll select 5 clusters after watching the separate.
+# Creating Partitions
+set.seed(123)
+# Making Part01 by selecting columns 1 to 50 from the Data.cereals dataset
+Part01 <- Data.cereals[1:50,]
+# Making Part02 by selecting lines 51 to 74 from the Data.cereals dataset
+Part02 <- Data.cereals[51:74,]
+```
+
+```{r}
+#Performing various leveled Clustering, considering k = 5 for the given linkages single, total, normal and ward individually.
+AGNES.single <- agnes(scale(Part01), method = "single")
+AGNES.complete <- agnes(scale(Part01), method = "complete")
+AGNES.average <- agnes(scale(Part01), method = "average")
+AGNES.ward <- agnes(scale(Part01), method = "ward")
+
+#Combining the 'ac' quality comes about from diverse progressive clustering strategies (single, total, normal, ward linkages individually)
+cbind(single=AGNES.single$ac , complete=AGNES.complete$ac , average= AGNES.average$ac , ward= AGNES.ward$ac)
+```
+
+```{r}
+# Plotting the dendrogram utilizing pltree work for various leveled clustering result (AGNES.ward) with indicated parameters
+pltree(AGNES.ward, cex = 0.6, hang = -1, main = "Dendogram of Agnes with Partitioned Data (Using Ward linkage)")
+
+# Highlighting clusters by drawing rectangles around clusters (in this case, k = 5 clusters) based on AGNES.ward result
+rect.hclust(AGNES.ward, k = 5, border = 1:4)
+```
+
+```{r}
+# Doling out cluster names to perceptions based on AGNES various leveled clustering with k=5 clusters
+cluster02 <- cutree(AGNES.ward, k = 5)
+```
+
+```{r}
+# Calculating the centeroids
+# Combining Part01 and cluster02 into a modern dataframe named 'result'
+result <- as.data.frame(cbind(Part01, cluster02))
+
+# Sifting columns in 'result' where the 'cluster02 ' column esteem rises to 1
+result[result$cluster02==1,]
+```
+
+```{r}
+# Calculating the centroid (cruel) for the columns of 'result' dataframe where 'cluster02 ' column esteem is break even with to 1
+centroid01 <- colMeans(result[result$cut_2==1,])
+
+# Calculating the centroid (unfeeling) for the columns of 'result' dataframe where 'cluster02 ' column regard is break indeed with to 1
+result[result$cluster02==2,]
+```
+
+```{r}
+# Calculating the centroid (cruel) for the columns of 'result' dataframe where 'cluster02 ' column esteem is rise to to 2
+centroid02 <- colMeans(result[result$cluster02==2,])
+# Showing lines in 'result' dataframe where the 'cluster02 ' column esteem is break even with to 3
+result[result$cluster02==3,]
+```
+
+```{r}
+# Calculating the centroid (cruel) for the columns of 'result' dataframe where 'cluster02 ' column esteem is break even with to 3
+centroid03 <- colMeans(result[result$cluster02 ==3,])
+# Showing lines in 'result' dataframe where the 'cluster02 ' column esteem is break even with to 4result[result$cluster02 ==4,]
+```
+
+```{r}
+# Calculating the centroid (cruel) for the columns of 'result' dataframe where 'cluster02 ' column esteem is rise to to 4
+centroid04 <- colMeans(result[result$cluster02 ==4,])
+# Calculating the centroid (unfeeling) for the columns of 'result' dataframe where 'cluster02 ' column regard is rise to to 4
+centroids <- rbind(centroid01, centroid02, centroid03, centroid04)
+# Making a unused dataframe 'x2' by combining centroids' information (barring the 14th column) with 'Part02'
+x2 <- as.data.frame(rbind(centroids[,-14], Part02))
+```
+
+```{r}
+#Calculating the Separate
+# Calculating separations between focuses in 'x2' utilizing the get_dist function
+Distance01 <- dist(x2)
+# Changing over the separate protest 'Distance01' into a network
+Matrix01 <- as.matrix(Distance01)
+# Making a dataframe 'data01' to store information and cluster assignments
+data01 <- data.frame(data=seq(1,nrow(Part02),1), Clusters = rep(0,nrow(Part02)))
+# Circling through each push of Part02 to allot clusters based on least separations
+for(i in 1:nrow(Part02))
+{data01[i,2] <- which.min(Matrix01[i+4, 1:4])}
+# Showing the coming about data01 containing information files and doled out clusters
+data01
+```
+
+```{r}
+# Combining Cluster01 values from data02 for lines 51 to 74 with Clusters values from data01
+cbind(data02$Cluster01[51:74], data01$Clusters)
+```
+
+```{r}
+# Making a table to compare balance between Cluster1 values from data02 (columns 51 to 74) and Clusters values from data01
+table(data02$Cluster01[51:74] == data01$Clusters)
+```
+
+# The demonstrate shows up to be somewhat steady, as prove by the 12 TRUE and 12 FALSE comes about.
+
+# The basic open schools would like to select a set of cereals to incorporate in their day by day cafeterias. Each day a distinctive cereal is advertised, but all cereals ought to bolster a sound eat less. For this objective, you're asked to discover a cluster of “healthy cereals.” Ought to the information be normalized? On the off chance that not, how ought to they be utilized within the cluster investigation
+
+```{r}
+#Making copy of 'Data.cereals' data frame named 'Healthy._Cereals'
+Healthy._Cereals <-Data.cereals
+# Preparing new data frame 'Healthy._Cereals.n' by deleting rows with missing values from 'Healthy._Cereals'
+Healthy._Cereals.n <- na.omit(Healthy._Cereals)
+# Mixing 'Healthy_Cereals_new' data frame with 'Cluster01' extracted from previous operations into 'Healthy._Cluster'
+Healthy._Cluster <- cbind(Healthy._Cereals.n, Cluster01)
+```
+
+```{r}
+# Displaying rows in 'Healthy._Cluster' dataframe where the 'Cluster01' column value is equal to 1
+Healthy._Cluster[Healthy._Cluster$Cluster01==1,]
+```
+
+```{r}
+# Showing lines in 'Healthy._Cluster' dataframe where the 'Cluster01' column esteem is rise to to 2
+Healthy._Cluster[Healthy._Cluster$Cluster01==2,]
+```
+
+```{r}
+# Displaying rows in 'Healthy._Cluster' dataframe where the 'Cluster01' column value is equal to 3
+Healthy._Cluster[Healthy._Cluster$Cluster01==3,]
+```
+
+```{r}
+# showing columns from the 'HealthyClust' dataframe where the 'Cluster1' column esteem is break even with to 4
+Healthy._Cluster[Healthy._Cluster$Cluster01==4,]
+```
+
+```{r}
+#Cruel evaluations to decide the most excellent cluster.
+# Calculating the cruel of 'rating' values for columns in 'Healthy._Cluster' dataframe where 'Cluster01' column esteem is break even with to 1
+mean(Healthy._Cluster[Healthy._Cluster$Cluster01==1,"rating"])
+```
+
+```{r}
+#Calculating the cruel of 'rating' values for columns in 'Healthy._Cluster' dataframe where 'Cluster01' column esteem is break even with to 2
+mean(Healthy._Cluster[Healthy._Cluster$Cluster01==2,"rating"])
+```
+
+```{r}
+# # Calculating the cruel of 'rating' values for columns in 'Healthy._Cluster' dataframe where 'Cluster01' column esteem is break even with to 3
+mean(Healthy._Cluster[Healthy._Cluster$Cluster01==3,"rating"])
+```
+
+```{r}
+# Calculating the cruel of 'rating' values for columns in 'Healthy._Cluster' dataframe where 'Cluster01' column esteem is rise to to 4
+mean(Healthy._Cluster[Healthy._Cluster$Cluster01==4,"rating"])
+```
+
+#Ready to take into thought cluster 1 since its cruel evaluations are the most noteworthy at 73.84446.
